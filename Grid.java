@@ -9,9 +9,10 @@ public class Grid {
 	 
 
 	public int win() {
+		//horizontal/vertical win checking code
+		
 		   //checks if there is a winning horizontal or vertical pattern and returns who won (1 or 2), or if it was a 
-		//draw (returns -1) or if there is no win or draw (0)
-		//chnage this to return who wins instead of true or flase
+		//draw (returns -1) or if there is no win or no draw (0)
 		   int horiz;
 		   for (int row=0; row<board.length; row++) {
 			   horiz=0; //resets to 0 for each new row
@@ -46,8 +47,11 @@ public class Grid {
 				   }
 			   }
 		   }
+		   
+		   //diagonal win checking code
+		   
 		 //if the middle number equals the top right and bottom left numbers or equals the 
-		   //top left and bottom right numbers, return true to show a winning vertical
+		   //top left and bottom right numbers, return true to show a winning diagonal
 		   //pattern
 		   int mid= board[1][1];
 		   if (mid== board [0][0] && mid== board [2][2]&&mid!=0) { //top left and bottom right
@@ -66,18 +70,29 @@ public class Grid {
 				   return 2;
 			   }
 		   }
-			   return 0;//if there are no winning patterns found, return 0
+		   
+		   //draw checking code
+		   
+		   //checks if there are no remaining spaces but no win (a draw) and returns -1 if so
+		   int zeros=9;
+			for (int []arr:board) {
+				for (int a: arr) {
+					if (a==0) {
+						break;
+					}
+					else {
+						zeros--;
+					}
+				}
+			}
+			
+			if (zeros==0) {
+				return -1;
+			}
+			
+			//no win code
+		   return 0;//if there are no winning patterns found, return 0
 		   }
-	   
-	 //draws x with graphics and assigns that place on the grid (within the array)
-	   //to be 1 to signify an x
-	   public void drawX() {
-		   
-	   }//can this be done in the processing/graphics class?
-	   
-	   public void drawO() {
-		   
-	   }
 	   
 	   }
 	   
