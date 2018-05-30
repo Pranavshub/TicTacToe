@@ -29,7 +29,6 @@ public class Sector extends PApplet {
 				graph[i][j] = whatSector;
 			}
 		}
-		System.out.println(endingPoint[0]);
 		drawingPoint1 = new int[endingPoint.length];
 		drawingPoint2 = new int[endingPoint.length];
 		drawingPoint3 = new int[endingPoint.length];
@@ -46,7 +45,7 @@ public class Sector extends PApplet {
 		midPoint[0] = drawingPoint2[0] + 50;
 		midPoint[1] = drawingPoint2[1] - 50;
 	}
-
+	
 	public void Print() {
 
 		for (int i = 0; i < graph.length; i++) {
@@ -77,8 +76,12 @@ public class Sector extends PApplet {
 	public int getXorO() {
 		if (isXorO == 1) {
 			return isXorO;
-		} else {
+		} 
+		else if (isXorO == 2){
 			return isXorO;
+		}
+		else {
+			return 0;
 		}
 	}
 
