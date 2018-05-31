@@ -2,7 +2,7 @@
 public class Grid {
 	   public int [][] board;
 	   public Grid (int [][] board){
-		   board=new int [3][3];//creates a multidimensional array representing the board
+		   //creates a multidimensional array representing the board
 		   //where 0 is blank, 1 is x, and 2 is o.
 	        this.board= board;
 	    }
