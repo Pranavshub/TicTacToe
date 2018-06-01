@@ -4,7 +4,7 @@ public class ComputerTurn extends Grid{
 	public int [][] board;
 	//constructor
 	public ComputerTurn(int [][] board) {
-		super(int [][] board);
+		super(int [][] board);//ask!
 	}
 	//returns the position to place the x to block a win if a win by the opponent
 	//is possible (1-9), otherwise returns 0
@@ -88,7 +88,7 @@ public class ComputerTurn extends Grid{
 	
 	//returns the best next move (if a win or block of a win is available), or the only remaining spot, or otherwise 
 	//just a random blank space on the board
-	public int nextMove() {
+	public int nextMoveMedium() {
 		int rem= remainingSpaces (board);
 		if (rem==1) { //if there is only one space remaining, locate it and return the spot
 			for(int r=0; r<board.length;r++) {
@@ -122,5 +122,44 @@ public class ComputerTurn extends Grid{
 				return blanks.get((int)(Math.random()*blanks.size()));
 			}
 		}
+	}
+	
+	public int nextMoveEasy () {
+		ArrayList <Integer> blanks=new ArrayList <Integer>();
+		for(int r=0; r<board.length;r++) {
+			int [] row= board [r];
+			for (int c=0; c<row.length;c++) {
+				int i= row[c];
+				if (i==0) {
+					blanks.add((r*3 + c)+1);
+				}
+			}
+		}
+		return blanks.get((int)(Math.random()*blanks.size()));
+	}
+	
+	public int [] toPoint (int level) { //parameter level is 1 for easy mode and 2 for medium mode
+		int ret;
+		if (level==1) {
+			ret= nextMoveEasy();
+		}
+		else{
+		ret= nextMoveMedium();
+		}
+		
+		int [] point= new int [2];
+		if (ret>0 && ret<4) {
+			point [0]= ret;
+			point [1]= 1;
+		}
+		else if (ret>3 && ret<7) {
+			point [0]= ret-3;
+			point [1]= 2;
+		}
+		else {
+			point [0]= ret-6;
+			point [1]= 3;
+		}
+		return point;
 	}
 }
