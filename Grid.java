@@ -8,7 +8,7 @@ public class Grid {
 		this.board = board;
 	}
 
-	public boolean win(int [][] b) { //code commented out can be put back in if the code needs to be modified to return
+	public boolean win(int [][] b,int player) { //code commented out can be put back in if the code needs to be modified to return
 		//who won
 		// horizontal/vertical win checking code
 
@@ -23,12 +23,11 @@ public class Grid {
 					horiz++;
 				}
 				if (horiz == 3) {
-					return true;
-					/*if (b[row][0] == 1) {
-						return 1;
+					if (b[row][0] == player) {
+						return true;
 					}
 
-					else {
+					/*else {
 						return 2;
 					}
 					*/
@@ -40,10 +39,10 @@ public class Grid {
 				if (row == 0) {// goes through this only with the first row
 					
 					if (b[0][col] == b[1][col] && b[0][col] == b[2][col] && b[0][col] != 0) {
-						return true;
-						/*if (b[0][col] == 1) {
-							return 1;
-						} else {
+						if (b[0][col] == player) {
+							return true;
+						} 
+						/*else {
 							return 2;
 						}
 						*/
@@ -62,18 +61,18 @@ public class Grid {
 		// pattern
 		int mid = b[1][1];
 		if (mid == b[0][0] && mid == b[2][2] && mid != 0) { // top left and bottom right
-			return true;
-			/*if (mid == 1) {
-				return 1;
-			} else {
+			if (mid == player) {
+				return true;
+			} 
+			/*else {
 				return 2;
 			}
 			*/
 		} else if (mid == b[0][2] && mid == b[2][0] && mid != 0) { // top right and bottom left
-			return true;
-			/*if (mid == 1) {
-				return 1;
-			} else {
+			if (mid == player) {
+				return true;
+			} 
+			/*else {
 				return 2;
 			}
 			*/
