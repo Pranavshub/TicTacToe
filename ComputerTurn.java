@@ -4,7 +4,7 @@ public class ComputerTurn extends Grid{
 	public int [][] board;
 	//constructor
 	public ComputerTurn(int [][] board) {
-		super(int [][] board);//ask!
+		super(board);//ask!
 	}
 	//returns the position to place the x to block a win if a win by the opponent
 	//is possible (1-9), otherwise returns 0
@@ -124,29 +124,30 @@ public class ComputerTurn extends Grid{
 		}
 	}
 	
-	public int nextMoveEasy () {
+	public int nextMoveEasy () { //chooses a random blank spot on the board
 		ArrayList <Integer> blanks=new ArrayList <Integer>();
 		for(int r=0; r<board.length;r++) {
 			int [] row= board [r];
 			for (int c=0; c<row.length;c++) {
 				int i= row[c];
 				if (i==0) {
-					blanks.add((r*3 + c)+1);
+					blanks.add((r*3 + c)+1); //finds indexes of blank spots and puts them into an array list
 				}
 			}
 		}
-		return blanks.get((int)(Math.random()*blanks.size()));
+		return blanks.get((int)(Math.random()*blanks.size())); // chooses a random blank space from the ones found
 	}
 	
 	public int [] toPoint (int level) { //parameter level is 1 for easy mode and 2 for medium mode
 		int ret;
 		if (level==1) {
-			ret= nextMoveEasy();
+			ret= nextMoveEasy(); //calls easy mode
 		}
 		else{
-		ret= nextMoveMedium();
+		ret= nextMoveMedium(); //calls medium mode
 		}
-		
+		//turns the int returned (ret) into an array representing x and y if the Tic Tac Toe board were a grid
+		//in order to work with Pranav's code
 		int [] point= new int [2];
 		if (ret>0 && ret<4) {
 			point [0]= ret;
