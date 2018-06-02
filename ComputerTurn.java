@@ -4,7 +4,7 @@ public class ComputerTurn extends Grid{
 	public int [][] board;
 	//constructor
 	public ComputerTurn(int [][] board) {
-		super(board);//ask!
+		super(board);
 	}
 	//returns the position to place the x to block a win if a win by the opponent
 	//is possible (1-9), otherwise returns 0
