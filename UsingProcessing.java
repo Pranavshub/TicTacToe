@@ -2,8 +2,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import java.awt.*;
-import javax.swing.*;
 import java.util.*;
+import javax.swing.*;
 import processing.core.PApplet;
 
 public class UsingProcessing extends PApplet {
@@ -31,9 +31,9 @@ public class UsingProcessing extends PApplet {
 	Sector sector9 = new Sector(point11, point12, 100, 9);
 	Sector[][] sectors = { { sector1, sector2, sector3 }, { sector4, sector5, sector6 },
 			{ sector7, sector8, sector9 } };
-	Point computerMove;
-	int[][] board = new int[3][3];
-
+	boolean moveOk;
+	Point compMove;
+	int counter;
 	public static void main(String[] args) {
 		PApplet.main("UsingProcessing");
 	}
@@ -58,134 +58,73 @@ public class UsingProcessing extends PApplet {
 			line(i, 0, i, 300);
 
 		}
-		 playerTurn();
-		 printItems();
-		 int board[][] = getBoard();
-		 if(isFinished(board,2)) {
-			 System.exit(1);
-		 }
-		 minimax(board,1);
-		 computerTurn();
-		 printItems();
-		 if(isFinished(board,1)) {
-			 System.exit(1);
-		 }
+		
+		if (!mousePressed) {
+			moveOk = true;
+			int[][] board = getBoard();
+			ArrayList<Point> availPoints = getAvailableSpaces(board);
+			if(!isFinished(board, 2) && !isFinished(board, 1) && availPoints.isEmpty() && counter == 0){
+				JFrame Frame  = new JFrame("Result");
+				JLabel label = new JLabel("Draw :|", JLabel.CENTER);
+				Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				Frame.setSize(500, 500);
+				Frame.add(label);
+				Frame.setVisible(true);
+				counter ++;
+			}
+		}
+		if (mousePressed) {
+			playGame();
+			moveOk = false;
+		}
 	}
-	
-	public void test() {
-		for(int i = 0; i < getAvailableSpaces().size(); i++) {
-			System.out.println(getAvailableSpaces().get(i));
+
+	public void playGame() {
+		if(moveOk) {
+			printItems();
+			playerTurn();
+			printItems();
 		}
 	}
 	
 	public void computerTurn() {
-		int x = computerMove.x;
-		int y = computerMove.y;
-		Sector newSec = sectors[x][y];
+		if(moveOk) {
+			int[][] board = getBoard();
+			int result = minimax(board, 1, 0);
+			int x = compMove.x;
+			int y = compMove.y;
+			Sector newSec = sectors[x][y];
+			newSec.setXorO(1);
+			System.out.println(result);
+			board = getBoard();
+			printItems();
+			if(isFinished(board, 1)) {
+				JFrame Frame  = new JFrame("Result");
+				JLabel label = new JLabel("I Won :>", JLabel.CENTER);
+				Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				Frame.setSize(500, 500);
+				Frame.add(label);
+				Frame.setVisible(true);
+			}
+		}
+	}
+
+	public void playerTurn() {
+		int[] coord = { mouseX, mouseY };
+		Sector newSec = getSector(coord);
 		newSec.setXorO(2);
-		
-	}
-
-	public boolean isFinished(int[][] board, int player) {
-		int horiz = 0;
-		for (int row = 0; row < board.length; row++) {
-			for (int col = 0; col < board[row].length; col++) {
-				if (board[row][0] == board[row][col] && board[row][0] != 0 && board[row][0] == player) {
-					horiz++;
-				}
-				if (horiz == 3) {
-					return true;
-				}
-				if (row == 0) {
-					if (board[0][col] == board[1][col] && board[0][col] == board[2][col] && board[0][col] != 0
-							&& board[0][col] == player) {
-						return true;
-					}
-				}
-			}
+		int[][] board = getBoard();
+		System.out.println(Arrays.deepToString(board));
+		System.out.println(isFinished(board,2));
+		if(isFinished(board, 2)) {
+			JFrame Frame  = new JFrame("Result");
+			JLabel label = new JLabel("You Won :<", JLabel.CENTER);
+			Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			Frame.setSize(500, 500);
+			Frame.add(label);
+			Frame.setVisible(true);
 		}
-		int mid = board[1][1];
-		if (mid == board[0][0] && mid == board[2][2] && mid != 0 && mid == player) {
-			return true;
-		} else if (mid == board[0][2] && mid == board[2][0] && mid != 0 && mid == player) {
-			return true;
-		}
-		return false;
-	}
-
-	public ArrayList<Point> getAvailableSpaces() {
-		ArrayList<Point> points = new ArrayList<Point>();
-		for (int i = 0; i < sectors.length; i++) {
-			for (int j = 0; j < sectors[0].length; j++) {
-				Point temp = new Point(i,j);
-				if (sectors[i][j].getXorO() == 0) {
-					points.add(temp);
-				}
-			}
-		}
-		return points;
-	}
-
-	public int minimax(int[][] board,int player) {
-		ArrayList<Point> availPoints = getAvailableSpaces();
-		int gameResult = 0;
-		if (isFinished(board,1)) {
-			return gameResult =  10;
-		}
-		else if(isFinished(board,2)) {
-			return gameResult = -10;
-		}
-		else if(availPoints.isEmpty()) {
-			return gameResult =  0;
-		}
-		ArrayList<Point> moves = new ArrayList<Point>();
-		for(int i = 0 ; i < availPoints.size(); i ++) {
-			int x = availPoints.get(i).x;
-			int y = availPoints.get(i).y;
-			Point move = new Point(x,y);
-			moves.add(move);
-			int temp = board[x][y];
-			board[x][y] = player;
-			
-			if(player == 1) {
-				int result = minimax(board, 2);
-				move.setScore(result);
-				
-			}
-			else if(player == 2) {
-				int result = minimax(board,1);
-				move.setScore(result);
-			}
-			board[x][y] = temp;
-		}
-		
-		Point bestMove = new Point(0,0);
-		if(player == 1) {
-			int bestScore = Integer.MIN_VALUE;
-			for(int i = 0; i < moves.size(); i++) {
-				Point temp = moves.get(i);
-				if(temp.score > bestScore) {
-					bestScore = temp.score;
-					bestMove = temp;
-					bestMove.setScore(temp.score);
-				}
-			}
-		}
-		
-		else {
-			int bestScore = Integer.MAX_VALUE;
-			for(int i = 0; i < moves.size(); i ++) {
-				Point temp = moves.get(i);
-				if(temp.score < bestScore) {
-					bestScore = temp.score;
-					bestMove = temp;
-					bestMove.setScore(temp.score);
-				}
-			}
-		}
-		
-		computerMove = bestMove;
-		return bestMove.score;
+		computerTurn();	
 	}
 
 	public void printItems() {
@@ -210,13 +149,174 @@ public class UsingProcessing extends PApplet {
 		}
 	}
 
-	public void playerTurn() {
-		if (mouseButton == LEFT) {
-			int[] coord = { mouseX, mouseY };
-			Point point = new Point(coord[0], coord[1]);
-			Sector newSec = getSector(coord);
-			newSec.setXorO(2);
+	public boolean isFinished(int [][] b,int player) { //code commented out can be put back in if the code needs to be modified to return
+		//who won
+		// horizontal/vertical win checking code
+
+		// checks if there is a winning horizontal or vertical pattern and returns who
+		// won (1 or 2), or if it was a
+		// draw (returns -1) or if there is no win or no draw (0)
+		int horiz;
+		for (int row = 0; row < b.length; row++) {
+			horiz = 0; // resets to 0 for each new row
+			for (int col = 0; col < b[row].length; col++) {
+				if (b[row][0] == b[row][col] && b[row][0] != 0) {
+					horiz++;
+				}
+				if (horiz == 3) {
+					if (b[row][0] == player) {
+						return true;
+					}
+
+					/*else {
+						return 2;
+					}
+					*/
+					// if the first number(which represents either an x or o, matches
+					// with the rest of the numbers in the row (aka if the entire row has
+					// the same number), return the number which won using horizontal pattern
+				}
+
+				if (row == 0) {// goes through this only with the first row
+					
+					if (b[0][col] == b[1][col] && b[0][col] == b[2][col] && b[0][col] != 0) {
+						if (b[0][col] == player) {
+							return true;
+						} 
+						/*else {
+							return 2;
+						}
+						*/
+						// if a number in the first row is the same as the two below it,
+						// return the number/ x or o that won with a vertical pattern
+					}
+				}
+			}
 		}
+
+		// diagonal win checking code
+
+		// if the middle number equals the top right and bottom left numbers or equals
+		// the
+		// top left and bottom right numbers, return true to show a winning diagonal
+		// pattern
+		int mid = b[1][1];
+		if (mid == b[0][0] && mid == b[2][2] && mid != 0) { // top left and bottom right
+			if (mid == player) {
+				return true;
+			} 
+			/*else {
+				return 2;
+			}
+			*/
+		} else if (mid == b[0][2] && mid == b[2][0] && mid != 0) { // top right and bottom left
+			if (mid == player) {
+				return true;
+			} 
+			/*else {
+				return 2;
+			}
+			*/
+		}
+
+		// draw checking code
+
+		// checks if there are no remaining spaces but no win (a draw) and returns -1 if
+		// so
+		int zeros = 9;
+		for (int row= 0; row<b.length; row++) {
+			int [] arr= b [row];
+			for (int col=0; col<arr.length;col++) {
+				int num= b[row][col];
+				if (num == 0) { 
+					break;
+				} else {
+					zeros--;
+				}
+			}
+		}
+
+		if (zeros == 0) {
+			return false;
+			//return -1;
+		}
+
+		// no win code
+		//return 0;// if there are no winning patterns found, return 0
+		return false;
+	}
+
+	public ArrayList<Point> getAvailableSpaces(int[][] board) {
+		ArrayList<Point> points = new ArrayList<Point>();
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[0].length; j++) {
+				Point temp = new Point(i, j);
+				if (board[i][j] == 0) {
+					points.add(temp);
+				}
+			}
+		}
+		return points;
+	}
+
+	public int minimax(int[][] board, int player, int depth) {
+		ArrayList<Point> availPoints = getAvailableSpaces(board);
+		if (isFinished(board, 1)) {
+			return 10 - depth;
+		} else if (isFinished(board, 2)) {
+			return -10 + depth;
+		} else if (availPoints.isEmpty()) {
+			return 0 + depth;
+		}
+		ArrayList<Point> moves = new ArrayList<Point>();
+		for (int i = 0; i < availPoints.size(); i++) {
+			int x = availPoints.get(i).x;
+			int y = availPoints.get(i).y;
+			Point move = new Point(x, y);
+			moves.add(move);
+			if(canPlaceMove(move)) {
+				board[x][y] = player;
+			}
+			if (player == 1) {
+				depth++;
+				int result = minimax(board, 2, depth);
+				move.setScore(result);
+
+			} else if (player == 2) {
+				depth++;
+				int result = minimax(board, 1, depth);
+				move.setScore(result);
+			}
+			board[x][y] = 0;
+		}
+
+		Point bestMove = new Point(0, 0);
+		if (player == 1) {
+			int bestScore = Integer.MIN_VALUE;
+			for (int i = 0; i < moves.size(); i++) {
+				Point temp = moves.get(i);
+				if (temp.score > bestScore) {
+					bestScore = temp.score;
+					bestMove = temp;
+					bestMove.setScore(temp.score);
+				}
+			}
+		}
+	
+		else if(player == 2){
+			int bestScore = Integer.MAX_VALUE;
+			for (int i = 0; i < moves.size(); i++) {
+				Point temp = moves.get(i);
+				if (temp.score < bestScore ) {
+					bestScore = temp.score;
+					bestMove = temp;
+					bestMove.setScore(temp.score);
+				}
+			}  
+		}
+
+		compMove = bestMove;
+		return bestMove.score;
 	}
 
 	public boolean canPlace(int[] coord) {
@@ -251,5 +351,17 @@ public class UsingProcessing extends PApplet {
 			}
 		}
 		return board;
+	}
+	
+	public boolean canPlaceMove(Point point){
+		int x = point.x;
+		int y = point.y;
+		Sector newSec = sectors[x][y];
+		if(newSec.getXorO() == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
